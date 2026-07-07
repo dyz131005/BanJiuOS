@@ -1,0 +1,44 @@
+## @file
+#  BanJiuOS Boot Loader Module Information File
+#
+#  Copyright (c) 2024 BanJiuOS Project. All rights reserved.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = BanJiuBootLoader
+  FILE_GUID                      = 12345678-1234-1234-1234-123456789ABC
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = UefiMain
+
+[Sources]
+  BootLoader.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  UefiLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  DebugLib
+  UefiApplicationEntryPoint
+  DevicePathLib
+
+[Protocols]
+  gEfiLoadedImageProtocolGuid
+  gEfiSimpleFileSystemProtocolGuid
+  gEfiGraphicsOutputProtocolGuid
+
+[Guids]
+  gEfiFileInfoGuid
+  gEfiFileSystemInfoGuid
+
+[BuildOptions]
+  GCC:*_*_*_CC_FLAGS = -Wall -Wextra
+  MSFT:*_*_*_CC_FLAGS = /W4 /GS- /GL-

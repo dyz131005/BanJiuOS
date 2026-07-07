@@ -1,0 +1,79 @@
+#
+# BanJiuOS Boot Loader Makefile (GNU-EFI Version)
+#
+# This Makefile builds the boot loader using GNU-EFI library.
+# GNU-EFI provides UEFI API bindings for GCC.
+#
+# Copyright (c) 2024 BanJiuOS Project. All rights reserved.
+#
+
+CC = gcc
+CFLAGS = -Wall -Wextra -O2 -fno-stack-protector -fshort-wchar -mno-red-zone
+LDFLAGS = -nostdlib -znocombreloc -T $(GNUEFI_LIB)/gnuefi/elf_x64_efi.lds
+LIBS = -L$(GNUEFI_LIB) -L$(GNUEFI_LIB)/gnuefi -L$(GNUEFI_LIB)/x86_64/lib \
+       -l:libgnuefi.a -l:libefi.a
+
+SRC_DIR = src
+BUILD_DIR = build
+EFI_DIR = $(BUILD_DIR)/EFI/BOOT
+
+TARGET = $(EFI_DIR)/BOOTX64.EFI
+
+SOURCES = $(SRC_DIR)/BootLoaderGnuEfi.c
+OBJECTS = $(BUILD_DIR)/BootLoaderGnuEfi.o
+
+GNUEFI_LIB ?= /usr/lib/gnu-efi
+
+.PHONY: all clean install help
+
+all: $(TARGET)
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+$(EFI_DIR):
+	mkdir -p $(EFI_DIR)
+
+$(BUILD_DIR)/BootLoaderGnuEfi.o: $(SRC_DIR)/BootLoaderGnuEfi.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -I$(GNUEFI_LIB)/include -I$(GNUEFI_LIB)/include/x86_64 \
+	     -c $< -o $@
+
+$(TARGET): $(OBJECTS) | $(EFI_DIR)
+	$(CC) $(LDFLAGS) $(OBJECTS) $(LIBS) -o $(BUILD_DIR)/BootLoader.so
+	objcopy -j .text -j .sdata -j .data -j .dynamic \
+	        -j .dynsym -j .rel -j .rela -j .reloc \
+	        --target=efi-app-x86_64 $(BUILD_DIR)/BootLoader.so $@
+	@echo "Built: $(TARGET)"
+
+install: $(TARGET)
+	@echo "Installing to iso/EFI/BOOT..."
+	mkdir -p ../iso/EFI/BOOT
+	cp $(TARGET) ../iso/EFI/BOOT/
+	@echo "Install complete."
+
+clean:
+	rm -rf $(BUILD_DIR)
+
+help:
+	@echo "BanJiuOS Boot Loader Build System (GNU-EFI)"
+	@echo "============================================"
+	@echo ""
+	@echo "Targets:"
+	@echo "  all       - Build BOOTX64.EFI (default)"
+	@echo "  install   - Copy to iso/EFI/BOOT/"
+	@echo "  clean     - Remove build artifacts"
+	@echo "  help      - Show this help message"
+	@echo ""
+	@echo "Environment Variables:"
+	@echo "  GNUEFI_LIB - Path to GNU-EFI library (default: /usr/lib/gnu-efi)"
+	@echo ""
+	@echo "Requirements:"
+	@echo "  GNU-EFI library must be installed."
+	@echo ""
+	@echo "Install GNU-EFI on Linux:"
+	@echo "  Ubuntu/Debian: sudo apt install gnu-efi"
+	@echo "  Fedora:        sudo dnf install gnu-efi"
+	@echo "  Arch:          sudo pacman -S gnu-efi"
+	@echo ""
+	@echo "Build example:"
+	@echo "  make GNUEFI_LIB=/usr/lib/gnu-efi all"

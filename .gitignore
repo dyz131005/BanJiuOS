@@ -1,0 +1,58 @@
+# Build output
+*.o
+*.elf
+*.EFI
+*.efi
+*.bjos
+*.map
+*.lst
+*.sym
+*.bin
+
+# Build directories
+bootloader/build/
+kernel/output/
+output/
+build/
+iso/output/
+
+# Disk images
+*.vhd
+*.vhdx
+*.vmdk
+*.qcow2
+*.qcow
+*.raw
+*.img
+*.iso
+
+# Log files
+*.log
+*.txt
+*.trace
+
+# Debug files
+*.gdb
+*.ps1
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.old
+
+# Python
+__pycache__/
+*.pyc

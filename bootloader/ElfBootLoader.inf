@@ -1,0 +1,39 @@
+## @file
+#  BanJiuOS ELF Kernel Boot Loader Module Information File
+#
+#  Copyright (c) 2024 BanJiuOS Project. All rights reserved.
+#
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = ElfBootLoader
+  FILE_GUID                      = 87654321-4321-4321-4321-CBA987654322
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = UefiMain
+
+[Sources]
+  ElfBootLoader.c
+  EfiElfLoader.c
+  SetupPaging.asm
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  UefiLib
+  UefiBootServicesTableLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  DebugLib
+  UefiApplicationEntryPoint
+
+[Protocols]
+  gEfiSimpleFileSystemProtocolGuid
+
+[Guids]
+  gEfiFileInfoGuid
+
+[BuildOptions]
+  MSFT:*_*_*_CC_FLAGS = /W4 /GS- /GL-
